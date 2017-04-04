@@ -7,7 +7,38 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <div class="search-bar">
+            <form method="GET" action="" class="js-fl-search fl-search">
+                <input type="search" name="q" placeholder="Search" autocomplete="off" class="search-input">
+            </form>
+        </div>
+        <header class="header">
+            <img class="logo-icon" src="{{ asset('images/financelogger-logo.png') }}">
+            <h1 class="logo">FinanceLogger</h1>
+            <ul class="navi">
+                <li class="search"><a href="#" class="js-header-search-toggle"><i class="fa fa-search"></i></a></li>
+                {% if is_granted('ROLE_USER') %}
+                    <li><a href="{{ path('security_logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ path('security_login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </header>
+
+        <div class="main-content">
+            {% for msg in app.session.flashBag.get('success') %}
+                <div class="alert alert-success">
+                    {{ msg }}
+                </div>
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+        </div>
+
+        <div class="footer">
+            <p class="footer-text">footer text</p>
+        </div>
+
         {% block javascripts %}{% endblock %}
     </body>
 </html>
