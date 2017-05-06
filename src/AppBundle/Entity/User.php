@@ -38,6 +38,11 @@ class User implements UserInterface
     private $plainPassword;
 
     /**
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
+
+    /**
      * @return string
      */
     public function getPlainPassword()
@@ -64,9 +69,26 @@ class User implements UserInterface
         return $this->email;
     }
 
+    /**
+     * @param array $roles
+     */
+    public function setRoles(array $roles)
+    {
+        $this->roles = $roles;
+    }
+
+    /**
+     * @return array
+     */
     public function getRoles()
     {
-        return ['ROLE_USER'];
+        $roles = $this->getRoles();
+
+        // give everyone ROLE_USER!
+        if (!in_array('ROLE_USER', $roles)) {
+            $roles[] = 'ROLE_USER';
+        }
+        return $roles;
     }
 
     public function getPassword()
