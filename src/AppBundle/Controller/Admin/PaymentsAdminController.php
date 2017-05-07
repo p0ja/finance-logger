@@ -5,11 +5,12 @@ namespace AppBundle\Controller\Admin;
 use AppBundle\Entity\Payment;
 use AppBundle\Form\PaymentFormType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * @Security("is_granted('ROLE_ADMIN')")
+ * @Security("is_granted('ROLE_MANAGE_PAYMENTS')")
  * @Route("/admin")
  */
 class PaymentsAdminController extends Controller
@@ -36,7 +37,7 @@ class PaymentsAdminController extends Controller
      */
     public function newAction(Request $request)
     {
-        $form = $this->createForm(PaymentsFormType::class);
+        $form = $this->createForm(PaymentFormType::class);
         // only handles data on POST
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -44,7 +45,10 @@ class PaymentsAdminController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($payments);
             $em->flush();
-            $this->addFlash('success', 'Payment created!');
+            $this->addFlash(
+                'success',
+                sprintf('Payment created by you: %s!', $this->getUser()->getEmail())
+            );
 
             return $this->redirectToRoute('admin_payments_list');
         }
@@ -57,9 +61,9 @@ class PaymentsAdminController extends Controller
     /**
      * @Route("/payments/{id}/edit", name="admin_payments_edit")
      */
-    public function editAction(Request $request, Payments $payments)
+    public function editAction(Request $request, Payment $payments)
     {
-        $form = $this->createForm(PaymentsFormType::class, $payments);
+        $form = $this->createForm(PaymentFormType::class, $payments);
         // only handles data on POST
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

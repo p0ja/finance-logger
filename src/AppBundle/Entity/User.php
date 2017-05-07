@@ -26,9 +26,20 @@ class User implements UserInterface
     private $email;
 
     /**
+     * The encoded password
      * @ORM\Column(type="string")
      */
     private $password;
+
+    private $groups;
+
+    /**
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * A non-persisted field that's used to create the encoded password.
@@ -70,27 +81,39 @@ class User implements UserInterface
     }
 
     /**
+     * @return array
+     */
+    public function getRoles()
+    {
+        $roles = [];
+
+        // loop over some ManyToMany relation to a Group entity
+        foreach ($this->groups as $group) {
+            $roles = array_merge($roles, $group->getRoles());
+        }
+
+        return $roles;
+    }
+
+    /**
      * @param array $roles
      */
-    public function setRoles(array $roles)
+    public function setRoles($roles)
     {
         $this->roles = $roles;
     }
 
     /**
-     * @return array
+     * @return mixed
      */
-    public function getRoles()
+    public function getEmail()
     {
-        $roles = $this->getRoles();
-
-        // give everyone ROLE_USER!
-        if (!in_array('ROLE_USER', $roles)) {
-            $roles[] = 'ROLE_USER';
-        }
-        return $roles;
+        return $this->email;
     }
 
+    /**
+     * @return string
+     */
     public function getPassword()
     {
         return $this->password;
@@ -120,5 +143,4 @@ class User implements UserInterface
     {
         $this->email = $email;
     }
-
 }

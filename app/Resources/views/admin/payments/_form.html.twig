@@ -1,0 +1,13 @@
+{{ form_start(paymentsForm) }}
+                    {{ form_row(paymentsForm.name) }}
+                    {{ form_row(paymentsForm.subPayment) }}
+                    {{ form_row(paymentsForm.paymentsCount, {
+                        'label': 'Number of payments'
+                    })
+                    }}
+                    {{ form_row(paymentsForm.funFact) }}
+                    {{ form_row(paymentsForm.isPublished) }}
+                    {{ form_row(paymentsForm.committedAt) }}
+
+<button type="submit" class="btn btn-primary" formnovalidate>Save</button>
+{{ form_end(paymentsForm) }}
